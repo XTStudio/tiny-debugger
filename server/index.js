@@ -186,6 +186,12 @@ var TinyDebugger = /** @class */ (function (_super) {
             it.emitToClient("removeAllBreakpoints");
         });
     };
+    TinyDebugger.prototype.removeBreakpointsWithPrefix = function (prefix) {
+        this.breakpoints = this.breakpoints.filter(function (it) { return !it.startsWith(prefix); });
+        this.clients.forEach(function (it) {
+            it.emitToClient("removeBreakpointsWithPrefix", { prefix: prefix });
+        });
+    };
     // Client Event Handlers
     TinyDebugger.prototype.events = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {

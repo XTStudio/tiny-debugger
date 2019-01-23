@@ -100,6 +100,13 @@ export class TinyDebugger extends EventEmitter {
         })
     }
 
+    removeBreakpointsWithPrefix(prefix: string) {
+        this.breakpoints = this.breakpoints.filter(it => !it.startsWith(prefix))
+        this.clients.forEach(it => {
+            it.emitToClient("removeBreakpointsWithPrefix", { prefix })
+        })
+    }
+
     // Client Event Handlers
 
     async events(req: http.IncomingMessage, res: http.ServerResponse) {

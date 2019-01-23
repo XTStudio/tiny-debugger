@@ -116,7 +116,7 @@ class $__Debugger {
                     } catch (error) {
                         console.error(error)
                     }
-                }    
+                }
                 else {
                     break
                 }
@@ -136,6 +136,9 @@ class $__Debugger {
         }
         else if (name === "removeAllBreakpoints") {
             this.removeAllBreakpoints()
+        }
+        else if (name === "removeBreakpointsWithPrefix") {
+            this.removeBreakpointsWithPrefix(params.prefix)
         }
     }
 
@@ -161,6 +164,13 @@ class $__Debugger {
 
     removeAllBreakpoints() {
         this.breakpoints = {}
+    }
+
+    removeBreakpointsWithPrefix(prefix: string) {
+        this.breakpoints = {}
+        Object.keys(this.breakpoints).filter(it => !it.startsWith(prefix)).forEach(it => {
+            this.breakpoints[it] = true
+        })
     }
 
     // Connector Events

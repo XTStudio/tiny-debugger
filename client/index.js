@@ -182,6 +182,9 @@ var $__Debugger = /** @class */ (function () {
         else if (name === "removeAllBreakpoints") {
             this.removeAllBreakpoints();
         }
+        else if (name === "removeBreakpointsWithPrefix") {
+            this.removeBreakpointsWithPrefix(params.prefix);
+        }
     };
     // Breakpoints
     $__Debugger.prototype.updateBreakpoints = function () {
@@ -202,6 +205,13 @@ var $__Debugger = /** @class */ (function () {
     };
     $__Debugger.prototype.removeAllBreakpoints = function () {
         this.breakpoints = {};
+    };
+    $__Debugger.prototype.removeBreakpointsWithPrefix = function (prefix) {
+        var _this = this;
+        this.breakpoints = {};
+        Object.keys(this.breakpoints).filter(function (it) { return !it.startsWith(prefix); }).forEach(function (it) {
+            _this.breakpoints[it] = true;
+        });
     };
     // Connector Events
     $__Debugger.prototype.onConnectorEvent = function (name, listener) {
