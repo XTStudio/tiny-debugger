@@ -72,6 +72,7 @@ var $__Connector = /** @class */ (function () {
     $__Connector.prototype.polling = function () {
         var _this = this;
         if (typeof navigator === "object") {
+            var startTime_1 = Date.now();
             var pollingRequest_1 = new XMLHttpRequest();
             pollingRequest_1.open("GET", "http://" + this.serverAddress + "/events", true);
             pollingRequest_1.setRequestHeader("device-uuid", this.deviceUUID);
@@ -84,7 +85,7 @@ var $__Connector = /** @class */ (function () {
                     });
                 }
                 catch (error) { }
-                if (pollingRequest_1.status === 0 && _this.state === 1) {
+                if (pollingRequest_1.status === 0 && _this.state === 1 && (Date.now() - startTime_1) < 55000) {
                     console.log("[Tiny-Debugger] Disconnected from server " + _this.serverAddress);
                     _this.state = 0;
                     _this.delegate.onConnectorDisconnected();

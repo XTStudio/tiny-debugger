@@ -36,6 +36,7 @@ class $__Connector {
 
     polling() {
         if (typeof navigator === "object") {
+            const startTime = Date.now()
             const pollingRequest = new XMLHttpRequest()
             pollingRequest.open("GET", "http://" + this.serverAddress + "/events", true)
             pollingRequest.setRequestHeader("device-uuid", this.deviceUUID)
@@ -47,7 +48,7 @@ class $__Connector {
                         this.delegate!!.handleEvent(it.name, it.params)
                     })
                 } catch (error) { }
-                if (pollingRequest.status === 0 && this.state === 1) {
+                if (pollingRequest.status === 0 && this.state === 1 && (Date.now() - startTime) < 55000) {
                     console.log("[Tiny-Debugger] Disconnected from server " + this.serverAddress)
                     this.state = 0
                     this.delegate!!.onConnectorDisconnected()
