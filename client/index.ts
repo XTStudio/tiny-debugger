@@ -29,7 +29,11 @@ class $__Connector {
                     if (mockRequest.status === 200) {
                         return JSON.parse(mockRequest.responseText)
                     }
-                } catch (error) { }
+                } catch (error) {
+                    if (Date.now() - startTime < 500) {
+                        alert("Connection lost.")
+                    }
+                }
             }
         }
     }

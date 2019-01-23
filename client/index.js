@@ -65,7 +65,11 @@ var $__Connector = /** @class */ (function () {
                         return JSON.parse(mockRequest.responseText);
                     }
                 }
-                catch (error) { }
+                catch (error) {
+                    if (Date.now() - startTime < 500) {
+                        alert("Connection lost.");
+                    }
+                }
             }
         }
     };
