@@ -95,7 +95,7 @@ var TinyDebugger = /** @class */ (function (_super) {
     }
     TinyDebugger.prototype.createServer = function (port) {
         var _this = this;
-        if (port === void 0) { port = 10001; }
+        if (port === void 0) { port = 8091; }
         http.createServer(function (req, res) { return __awaiter(_this, void 0, void 0, function () {
             var _a, _b, _c, _d, _e, _f, _g, _h, error_1;
             return __generator(this, function (_j) {

@@ -31,7 +31,7 @@ export class TinyDebugger extends EventEmitter {
     private clients: Client[] = []
     private breakpoints: string[] = []
 
-    createServer(port: number = 10001) {
+    createServer(port: number = 8091) {
         http.createServer(async (req, res) => {
             res.setHeader("Access-Control-Allow-Origin", "*")
             res.setHeader("Access-Control-Allow-Methods", "GET,POST")
