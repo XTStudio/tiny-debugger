@@ -13,32 +13,25 @@ class $__Connector {
 
     state = 0
 
-    wait(event: string, params: any = {}, timeout = 600000): Promise<any> {
-        return new Promise((resolver, rejector) => {
-            let startTime = Date.now()
-            let execBlock = () => {
-                if (typeof navigator === "object") {
-                    // WebView
-                    if (Date.now() - startTime > timeout) {
-                        rejector(Error("timeout."))
-                    }
-                    const mockRequest = new XMLHttpRequest()
-                    try {
-                        mockRequest.open("POST", "http://" + this.serverAddress + "/" + event, false)
-                        mockRequest.setRequestHeader("device-uuid", this.deviceUUID)
-                        mockRequest.send(JSON.stringify(params))
-                        if (mockRequest.status === 200) {
-                            resolver(JSON.parse(mockRequest.responseText))
-                        }
-                    } catch (error) {
-                        setTimeout(() => {
-                            execBlock()
-                        }, 3000)
-                    }
+    wait(event: string, params: any = {}, timeout = 600000): any {
+        let startTime = Date.now()
+        while (true) {
+            if (typeof navigator === "object") {
+                // WebView
+                if (Date.now() - startTime > timeout) {
+                    throw Error("timeout")
                 }
+                const mockRequest = new XMLHttpRequest()
+                try {
+                    mockRequest.open("POST", "http://" + this.serverAddress + "/" + event, false)
+                    mockRequest.setRequestHeader("device-uuid", this.deviceUUID)
+                    mockRequest.send(JSON.stringify(params))
+                    if (mockRequest.status === 200) {
+                        return JSON.parse(mockRequest.responseText)
+                    }
+                } catch (error) { }
             }
-            execBlock()
-        })
+        }
     }
 
     polling() {
@@ -69,15 +62,16 @@ class $__Connector {
     }
 
     connect() {
-        console.log("[Tiny-Debugger] Connecting to server " + this.serverAddress)
-        this.wait("connected").then((obj) => {
+        try {
+            console.log("[Tiny-Debugger] Connecting to server " + this.serverAddress)
+            const obj = this.wait("connected")
             console.log(`[Tiny-Debugger] Connected to server and echo '${obj.echo}'.`)
             this.state = 1
             this.delegate!!.onConnectorConnected()
             this.polling()
-        }).catch(() => {
+        } catch (error) {
             this.state = -1
-        })
+        }
     }
 
 }

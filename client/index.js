@@ -47,35 +47,27 @@ var $__Connector = /** @class */ (function () {
         this.state = 0;
     }
     $__Connector.prototype.wait = function (event, params, timeout) {
-        var _this = this;
         if (params === void 0) { params = {}; }
         if (timeout === void 0) { timeout = 600000; }
-        return new Promise(function (resolver, rejector) {
-            var startTime = Date.now();
-            var execBlock = function () {
-                if (typeof navigator === "object") {
-                    // WebView
-                    if (Date.now() - startTime > timeout) {
-                        rejector(Error("timeout."));
-                    }
-                    var mockRequest = new XMLHttpRequest();
-                    try {
-                        mockRequest.open("POST", "http://" + _this.serverAddress + "/" + event, false);
-                        mockRequest.setRequestHeader("device-uuid", _this.deviceUUID);
-                        mockRequest.send(JSON.stringify(params));
-                        if (mockRequest.status === 200) {
-                            resolver(JSON.parse(mockRequest.responseText));
-                        }
-                    }
-                    catch (error) {
-                        setTimeout(function () {
-                            execBlock();
-                        }, 3000);
+        var startTime = Date.now();
+        while (true) {
+            if (typeof navigator === "object") {
+                // WebView
+                if (Date.now() - startTime > timeout) {
+                    throw Error("timeout");
+                }
+                var mockRequest = new XMLHttpRequest();
+                try {
+                    mockRequest.open("POST", "http://" + this.serverAddress + "/" + event, false);
+                    mockRequest.setRequestHeader("device-uuid", this.deviceUUID);
+                    mockRequest.send(JSON.stringify(params));
+                    if (mockRequest.status === 200) {
+                        return JSON.parse(mockRequest.responseText);
                     }
                 }
-            };
-            execBlock();
-        });
+                catch (error) { }
+            }
+        }
     };
     $__Connector.prototype.polling = function () {
         var _this = this;
@@ -106,16 +98,17 @@ var $__Connector = /** @class */ (function () {
         }
     };
     $__Connector.prototype.connect = function () {
-        var _this = this;
-        console.log("[Tiny-Debugger] Connecting to server " + this.serverAddress);
-        this.wait("connected").then(function (obj) {
+        try {
+            console.log("[Tiny-Debugger] Connecting to server " + this.serverAddress);
+            var obj = this.wait("connected");
             console.log("[Tiny-Debugger] Connected to server and echo '" + obj.echo + "'.");
-            _this.state = 1;
-            _this.delegate.onConnectorConnected();
-            _this.polling();
-        }).catch(function () {
-            _this.state = -1;
-        });
+            this.state = 1;
+            this.delegate.onConnectorConnected();
+            this.polling();
+        }
+        catch (error) {
+            this.state = -1;
+        }
     };
     return $__Connector;
 }());
