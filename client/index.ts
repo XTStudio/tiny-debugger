@@ -93,16 +93,34 @@ class $__Debugger {
     private connector = new $__Connector
     private connectorEventListeners: { [key: string]: (() => void)[] } = {}
     private breakpoints: { [key: string]: boolean } = {}
+    private breakingNext = false
 
     async start() {
         this.connector.delegate = this
         await this.connector.connect()
     }
 
-    step(uri: string) {
-        if (this.breakpoints[uri] === true) {
+    step(uri: string, evalCallback: (script: string) => void) {
+        if (this.breakpoints[uri] === true || this.breakingNext) {
+            this.breakingNext = false
             this.connector.wait("paused", { uri })
-            this.connector.wait("resume")
+            while (true) {
+                const resumeParams = this.connector.wait("resume")
+                if (resumeParams && resumeParams.next === true) {
+                    this.breakingNext = true
+                    break
+                }
+                else if (resumeParams && typeof resumeParams.eval === "string") {
+                    try {
+                        evalCallback(resumeParams.eval)
+                    } catch (error) {
+                        console.error(error)
+                    }
+                }    
+                else {
+                    break
+                }
+            }
         }
     }
 

@@ -129,6 +129,7 @@ var $__Debugger = /** @class */ (function () {
         this.connector = new $__Connector;
         this.connectorEventListeners = {};
         this.breakpoints = {};
+        this.breakingNext = false;
     }
     $__Debugger.prototype.start = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -144,10 +145,28 @@ var $__Debugger = /** @class */ (function () {
             });
         });
     };
-    $__Debugger.prototype.step = function (uri) {
-        if (this.breakpoints[uri] === true) {
+    $__Debugger.prototype.step = function (uri, evalCallback) {
+        if (this.breakpoints[uri] === true || this.breakingNext) {
+            this.breakingNext = false;
             this.connector.wait("paused", { uri: uri });
-            this.connector.wait("resume");
+            while (true) {
+                var resumeParams = this.connector.wait("resume");
+                if (resumeParams && resumeParams.next === true) {
+                    this.breakingNext = true;
+                    break;
+                }
+                else if (resumeParams && typeof resumeParams.eval === "string") {
+                    try {
+                        evalCallback(resumeParams.eval);
+                    }
+                    catch (error) {
+                        console.error(error);
+                    }
+                }
+                else {
+                    break;
+                }
+            }
         }
     };
     $__Debugger.prototype.handleEvent = function (name, params) {
