@@ -51,6 +51,7 @@ var $__Connector = /** @class */ (function () {
         if (timeout === void 0) { timeout = 600000; }
         var startTime = Date.now();
         while (true) {
+            var connectStartTime = Date.now();
             if (typeof navigator === "object") {
                 // WebView
                 if (Date.now() - startTime > timeout) {
@@ -66,8 +67,8 @@ var $__Connector = /** @class */ (function () {
                     }
                 }
                 catch (error) {
-                    if (Date.now() - startTime < 500) {
-                        alert("Connection lost.");
+                    if (Date.now() - connectStartTime < 500) {
+                        alert("Connection Lost.");
                     }
                 }
             }

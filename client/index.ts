@@ -16,6 +16,7 @@ class $__Connector {
     wait(event: string, params: any = {}, timeout = 600000): any {
         let startTime = Date.now()
         while (true) {
+            let connectStartTime = Date.now()
             if (typeof navigator === "object") {
                 // WebView
                 if (Date.now() - startTime > timeout) {
@@ -30,8 +31,8 @@ class $__Connector {
                         return JSON.parse(mockRequest.responseText)
                     }
                 } catch (error) {
-                    if (Date.now() - startTime < 500) {
-                        alert("Connection lost.")
+                    if (Date.now() - connectStartTime < 500) {
+                        alert("Connection Lost.")
                     }
                 }
             }
