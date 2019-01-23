@@ -15,6 +15,7 @@ class $__Connector {
 
     wait(event: string, params: any = {}, timeout = 600000): any {
         let startTime = Date.now()
+        let retryTime = 0
         while (true) {
             let connectStartTime = Date.now()
             if (typeof navigator === "object") {
@@ -31,8 +32,13 @@ class $__Connector {
                         return JSON.parse(mockRequest.responseText)
                     }
                 } catch (error) {
-                    if (Date.now() - connectStartTime < 500) {
-                        alert("Connection Lost.")
+                    if (Date.now() - connectStartTime < 500 && retryTime % 100 === 0) {
+                        if (confirm("连接已中断，要结束调试吗？")) {
+                            break
+                        }
+                    }
+                    else {
+                        retryTime++
                     }
                 }
             }

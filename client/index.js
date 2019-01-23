@@ -50,6 +50,7 @@ var $__Connector = /** @class */ (function () {
         if (params === void 0) { params = {}; }
         if (timeout === void 0) { timeout = 600000; }
         var startTime = Date.now();
+        var retryTime = 0;
         while (true) {
             var connectStartTime = Date.now();
             if (typeof navigator === "object") {
@@ -67,8 +68,13 @@ var $__Connector = /** @class */ (function () {
                     }
                 }
                 catch (error) {
-                    if (Date.now() - connectStartTime < 500) {
-                        alert("Connection Lost.");
+                    if (Date.now() - connectStartTime < 500 && retryTime % 100 === 0) {
+                        if (confirm("连接已中断，要结束调试吗？")) {
+                            break;
+                        }
+                    }
+                    else {
+                        retryTime++;
                     }
                 }
             }
