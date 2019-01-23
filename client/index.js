@@ -155,25 +155,14 @@ var $__Debugger = /** @class */ (function () {
     };
     // Breakpoints
     $__Debugger.prototype.updateBreakpoints = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var breakpointsData;
-            var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        this.removeAllBreakpoints();
-                        return [4 /*yield*/, this.connector.wait("breakpoints")];
-                    case 1:
-                        breakpointsData = _a.sent();
-                        if (breakpointsData.items instanceof Array) {
-                            breakpointsData.items.forEach(function (uri) {
-                                _this.setBreakpoint(uri);
-                            });
-                        }
-                        return [2 /*return*/];
-                }
+        var _this = this;
+        this.removeAllBreakpoints();
+        var breakpointsData = this.connector.wait("breakpoints");
+        if (breakpointsData.items instanceof Array) {
+            breakpointsData.items.forEach(function (uri) {
+                _this.setBreakpoint(uri);
             });
-        });
+        }
     };
     $__Debugger.prototype.setBreakpoint = function (uri) {
         this.breakpoints[uri] = true;

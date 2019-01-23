@@ -112,9 +112,9 @@ class $__Debugger {
 
     // Breakpoints
 
-    async updateBreakpoints() {
+    updateBreakpoints() {
         this.removeAllBreakpoints()
-        const breakpointsData = await this.connector.wait("breakpoints")
+        const breakpointsData = this.connector.wait("breakpoints")
         if (breakpointsData.items instanceof Array) {
             breakpointsData.items.forEach((uri: string) => {
                 this.setBreakpoint(uri)
