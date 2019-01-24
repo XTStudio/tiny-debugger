@@ -167,10 +167,11 @@ class $__Debugger {
     }
 
     removeBreakpointsWithPrefix(prefix: string) {
-        this.breakpoints = {}
+        let breakpoints: any = {}
         Object.keys(this.breakpoints).filter(it => !it.startsWith(prefix)).forEach(it => {
-            this.breakpoints[it] = true
+            breakpoints[it] = true
         })
+        this.breakpoints = breakpoints
     }
 
     // Connector Events

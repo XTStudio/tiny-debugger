@@ -207,11 +207,11 @@ var $__Debugger = /** @class */ (function () {
         this.breakpoints = {};
     };
     $__Debugger.prototype.removeBreakpointsWithPrefix = function (prefix) {
-        var _this = this;
-        this.breakpoints = {};
+        var breakpoints = {};
         Object.keys(this.breakpoints).filter(function (it) { return !it.startsWith(prefix); }).forEach(function (it) {
-            _this.breakpoints[it] = true;
+            breakpoints[it] = true;
         });
+        this.breakpoints = breakpoints;
     };
     // Connector Events
     $__Debugger.prototype.onConnectorEvent = function (name, listener) {
