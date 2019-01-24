@@ -100,10 +100,10 @@ class $__Debugger {
         await this.connector.connect()
     }
 
-    step(uri: string, evalCallback: (script: string) => void) {
+    step(uri: string, evalCallback: (script: string) => void, variables: any = {}) {
         if (this.breakpoints[uri] === true || this.breakingNext) {
             this.breakingNext = false
-            this.connector.wait("paused", { uri })
+            this.connector.wait("paused", { uri, variables })
             while (true) {
                 const resumeParams = this.connector.wait("resume")
                 if (resumeParams && resumeParams.next === true) {

@@ -145,10 +145,11 @@ var $__Debugger = /** @class */ (function () {
             });
         });
     };
-    $__Debugger.prototype.step = function (uri, evalCallback) {
+    $__Debugger.prototype.step = function (uri, evalCallback, variables) {
+        if (variables === void 0) { variables = {}; }
         if (this.breakpoints[uri] === true || this.breakingNext) {
             this.breakingNext = false;
-            this.connector.wait("paused", { uri: uri });
+            this.connector.wait("paused", { uri: uri, variables: variables });
             while (true) {
                 var resumeParams = this.connector.wait("resume");
                 if (resumeParams && resumeParams.next === true) {
