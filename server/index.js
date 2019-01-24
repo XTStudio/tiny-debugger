@@ -158,7 +158,10 @@ var TinyDebugger = /** @class */ (function (_super) {
     };
     // Breakpoint Handlers
     TinyDebugger.prototype.setBreakpoints = function (bps) {
-        this.breakpoints = bps;
+        var _this = this;
+        bps.forEach(function (it) {
+            _this.breakpoints.push(it);
+        });
         this.clients.forEach(function (it) {
             it.emitToClient("updateBreakpoints");
         });
