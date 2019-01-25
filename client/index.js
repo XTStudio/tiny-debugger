@@ -47,22 +47,17 @@ var $__Connector = /** @class */ (function () {
             if (typeof window === "object") {
                 return window.location.hostname + ":8091";
             }
-            return "localhost:8091";
+            return "127.0.0.1:8091";
         })();
         this.state = 0;
     }
-    $__Connector.prototype.wait = function (event, params, timeout) {
+    $__Connector.prototype.wait = function (event, params) {
         if (params === void 0) { params = {}; }
-        if (timeout === void 0) { timeout = 600000; }
-        var startTime = Date.now();
         var retryTime = 0;
         while (true) {
             var connectStartTime = Date.now();
             if (typeof navigator === "object") {
                 // WebView
-                if (Date.now() - startTime > timeout) {
-                    throw Error("timeout");
-                }
                 var mockRequest = new XMLHttpRequest();
                 try {
                     mockRequest.open("POST", "http://" + this.serverAddress + "/" + event, false);
@@ -82,6 +77,19 @@ var $__Connector = /** @class */ (function () {
                         retryTime++;
                     }
                 }
+            }
+            else if (typeof XTSHttpRequest === "function") {
+                // Native
+                var mockRequest = new XTSHttpRequest();
+                mockRequest.open("POST", "http://" + this.serverAddress + "/" + event);
+                mockRequest.setRequestHeader("device-uuid", this.deviceUUID);
+                mockRequest.send(JSON.stringify(params));
+                if (mockRequest.status === 200) {
+                    return JSON.parse(mockRequest.responseText);
+                }
+            }
+            else {
+                break;
             }
         }
     };
@@ -112,6 +120,33 @@ var $__Connector = /** @class */ (function () {
                 }
             };
             pollingRequest_1.send();
+        }
+        else if (typeof XTSHttpRequest === "function") {
+            // Native
+            var startTime_2 = Date.now();
+            var pollingRequest_2 = new XTSHttpRequest();
+            pollingRequest_2.open("GET", "http://" + this.serverAddress + "/events", true);
+            pollingRequest_2.setRequestHeader("device-uuid", this.deviceUUID);
+            pollingRequest_2.timeout = 60000;
+            pollingRequest_2.onloadend = function () {
+                try {
+                    var pollingEvents = JSON.parse(pollingRequest_2.responseText);
+                    pollingEvents.events.forEach(function (it) {
+                        _this.delegate.handleEvent(it.name, it.params);
+                    });
+                }
+                catch (error) { }
+                if (pollingRequest_2.status === 0 && _this.state === 1 && (Date.now() - startTime_2) < 55000) {
+                    console.log("[Tiny-Debugger] Disconnected from server " + _this.serverAddress);
+                    _this.state = 0;
+                    _this.delegate.onConnectorDisconnected();
+                    _this.connect();
+                }
+                else {
+                    _this.polling();
+                }
+            };
+            pollingRequest_2.send();
         }
     };
     $__Connector.prototype.connect = function () {

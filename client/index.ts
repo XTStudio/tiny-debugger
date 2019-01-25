@@ -1,3 +1,5 @@
+declare var XTSHttpRequest: any
+
 class $__Connector {
 
     delegate: $__Debugger | undefined = undefined
@@ -13,21 +15,17 @@ class $__Connector {
         if (typeof window === "object") {
             return window.location.hostname + ":8091"
         }
-        return "localhost:8091"
+        return "127.0.0.1:8091"
     })()
 
     state = 0
 
-    wait(event: string, params: any = {}, timeout = 600000): any {
-        let startTime = Date.now()
+    wait(event: string, params: any = {}): any {
         let retryTime = 0
         while (true) {
             let connectStartTime = Date.now()
             if (typeof navigator === "object") {
                 // WebView
-                if (Date.now() - startTime > timeout) {
-                    throw Error("timeout")
-                }
                 const mockRequest = new XMLHttpRequest()
                 try {
                     mockRequest.open("POST", "http://" + this.serverAddress + "/" + event, false)
@@ -47,6 +45,19 @@ class $__Connector {
                     }
                 }
             }
+            else if (typeof XTSHttpRequest === "function") {
+                // Native
+                const mockRequest = new XTSHttpRequest()
+                mockRequest.open("POST", "http://" + this.serverAddress + "/" + event)
+                mockRequest.setRequestHeader("device-uuid", this.deviceUUID)
+                mockRequest.send(JSON.stringify(params))
+                if (mockRequest.status === 200) {
+                    return JSON.parse(mockRequest.responseText)
+                }
+            }
+            else {
+                break
+            }
         }
     }
 
@@ -58,6 +69,32 @@ class $__Connector {
             pollingRequest.setRequestHeader("device-uuid", this.deviceUUID)
             pollingRequest.timeout = 60000
             pollingRequest.onloadend = (e) => {
+                try {
+                    const pollingEvents = JSON.parse(pollingRequest.responseText)
+                    pollingEvents.events.forEach((it: any) => {
+                        this.delegate!!.handleEvent(it.name, it.params)
+                    })
+                } catch (error) { }
+                if (pollingRequest.status === 0 && this.state === 1 && (Date.now() - startTime) < 55000) {
+                    console.log("[Tiny-Debugger] Disconnected from server " + this.serverAddress)
+                    this.state = 0
+                    this.delegate!!.onConnectorDisconnected()
+                    this.connect()
+                }
+                else {
+                    this.polling()
+                }
+            }
+            pollingRequest.send()
+        }
+        else if (typeof XTSHttpRequest === "function") {
+            // Native
+            const startTime = Date.now()
+            const pollingRequest = new XTSHttpRequest()
+            pollingRequest.open("GET", "http://" + this.serverAddress + "/events", true)
+            pollingRequest.setRequestHeader("device-uuid", this.deviceUUID)
+            pollingRequest.timeout = 60000
+            pollingRequest.onloadend = () => {
                 try {
                     const pollingEvents = JSON.parse(pollingRequest.responseText)
                     pollingEvents.events.forEach((it: any) => {
