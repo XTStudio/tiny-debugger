@@ -100,6 +100,10 @@ class $__Debugger {
         await this.connector.connect()
     }
 
+    debuggerStep() {
+        this.breakingNext = true
+    }
+
     step(uri: string, evalCallback: (script: string) => void, variables: any = {}) {
         if (this.breakpoints[uri] === true || this.breakingNext) {
             this.breakingNext = false

@@ -145,6 +145,9 @@ var $__Debugger = /** @class */ (function () {
             });
         });
     };
+    $__Debugger.prototype.debuggerStep = function () {
+        this.breakingNext = true;
+    };
     $__Debugger.prototype.step = function (uri, evalCallback, variables) {
         if (variables === void 0) { variables = {}; }
         if (this.breakpoints[uri] === true || this.breakingNext) {
