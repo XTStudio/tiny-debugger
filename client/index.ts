@@ -9,7 +9,12 @@ class $__Connector {
         return ""
     })()
 
-    serverAddress = "localhost:8091"
+    serverAddress = (() => {
+        if (typeof window === "object") {
+            return window.location.hostname + ":8091"
+        }
+        return "localhost:8091"
+    })()
 
     state = 0
 

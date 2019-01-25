@@ -43,7 +43,12 @@ var $__Connector = /** @class */ (function () {
             }
             return "";
         })();
-        this.serverAddress = "localhost:8091";
+        this.serverAddress = (function () {
+            if (typeof window === "object") {
+                return window.location.hostname + ":8091";
+            }
+            return "localhost:8091";
+        })();
         this.state = 0;
     }
     $__Connector.prototype.wait = function (event, params, timeout) {
