@@ -1,4 +1,5 @@
 declare var XTSHttpRequest: any
+declare var UIDevice: any
 
 class $__Connector {
 
@@ -7,6 +8,9 @@ class $__Connector {
     deviceUUID: string = (() => {
         if (typeof navigator === "object") {
             return "Browser " + Date.now()
+        }
+        else if (typeof UIDevice === "object") {
+            return UIDevice.current.identifierForVendor
         }
         return ""
     })()

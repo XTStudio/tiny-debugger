@@ -41,6 +41,9 @@ var $__Connector = /** @class */ (function () {
             if (typeof navigator === "object") {
                 return "Browser " + Date.now();
             }
+            else if (typeof UIDevice === "object") {
+                return UIDevice.current.identifierForVendor;
+            }
             return "";
         })();
         this.serverAddress = (function () {
