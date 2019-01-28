@@ -41,7 +41,7 @@ var $__Connector = /** @class */ (function () {
             if (typeof navigator === "object") {
                 return "Browser " + Date.now();
             }
-            else if (typeof UIDevice === "object") {
+            else if (typeof UIDevice === "function" || typeof UIDevice === "object") {
                 return UIDevice.current.identifierForVendor.UUIDString;
             }
             return "";
