@@ -10,7 +10,7 @@ class $__Connector {
             return "Browser " + Date.now()
         }
         else if (typeof UIDevice === "object") {
-            return UIDevice.current.identifierForVendor
+            return UIDevice.current.identifierForVendor.UUIDString
         }
         return ""
     })()

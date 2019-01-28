@@ -42,7 +42,7 @@ var $__Connector = /** @class */ (function () {
                 return "Browser " + Date.now();
             }
             else if (typeof UIDevice === "object") {
-                return UIDevice.current.identifierForVendor;
+                return UIDevice.current.identifierForVendor.UUIDString;
             }
             return "";
         })();
