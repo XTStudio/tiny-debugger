@@ -56,6 +56,7 @@ var $__Connector = /** @class */ (function () {
     }
     $__Connector.prototype.wait = function (event, params) {
         if (params === void 0) { params = {}; }
+        this.currentPollingRequest = undefined;
         var retryTime = 0;
         while (true) {
             var connectStartTime = Date.now();
@@ -101,6 +102,7 @@ var $__Connector = /** @class */ (function () {
         if (typeof navigator === "object") {
             var startTime_1 = Date.now();
             var pollingRequest_1 = new XMLHttpRequest();
+            this.currentPollingRequest = pollingRequest_1;
             pollingRequest_1.open("GET", "http://" + this.serverAddress + "/events", true);
             pollingRequest_1.setRequestHeader("device-uuid", this.deviceUUID);
             pollingRequest_1.timeout = 60000;
@@ -112,7 +114,7 @@ var $__Connector = /** @class */ (function () {
                     });
                 }
                 catch (error) { }
-                if (pollingRequest_1.status === 0 && _this.state === 1 && (Date.now() - startTime_1) < 55000) {
+                if (_this.currentPollingRequest === pollingRequest_1 && pollingRequest_1.status === 0 && _this.state === 1 && (Date.now() - startTime_1) < 55000) {
                     console.log("[Tiny-Debugger] Disconnected from server " + _this.serverAddress);
                     _this.state = 0;
                     _this.delegate.onConnectorDisconnected();
@@ -128,6 +130,7 @@ var $__Connector = /** @class */ (function () {
             // Native
             var startTime_2 = Date.now();
             var pollingRequest_2 = new XTSHttpRequest();
+            this.currentPollingRequest = pollingRequest_2;
             pollingRequest_2.open("GET", "http://" + this.serverAddress + "/events", true);
             pollingRequest_2.setRequestHeader("device-uuid", this.deviceUUID);
             pollingRequest_2.timeout = 60000;
@@ -139,7 +142,7 @@ var $__Connector = /** @class */ (function () {
                     });
                 }
                 catch (error) { }
-                if (pollingRequest_2.status === 0 && _this.state === 1 && (Date.now() - startTime_2) < 55000) {
+                if (_this.currentPollingRequest === pollingRequest_2 && pollingRequest_2.status === 0 && _this.state === 1 && (Date.now() - startTime_2) < 55000) {
                     console.log("[Tiny-Debugger] Disconnected from server " + _this.serverAddress);
                     _this.state = 0;
                     _this.delegate.onConnectorDisconnected();
