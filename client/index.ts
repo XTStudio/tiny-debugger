@@ -59,6 +59,13 @@ class $__Connector {
                 if (mockRequest.status === 200) {
                     return JSON.parse(mockRequest.responseText)
                 }
+                else {
+                    if (Date.now() - connectStartTime < 500) {
+                        setTimeout(() => {
+                            this.connect()
+                        }, 2000)
+                    }
+                }
             }
             else {
                 break

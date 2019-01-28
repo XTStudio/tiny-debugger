@@ -55,6 +55,7 @@ var $__Connector = /** @class */ (function () {
         this.state = 0;
     }
     $__Connector.prototype.wait = function (event, params) {
+        var _this = this;
         if (params === void 0) { params = {}; }
         this.currentPollingRequest = undefined;
         var retryTime = 0;
@@ -90,6 +91,13 @@ var $__Connector = /** @class */ (function () {
                 mockRequest.send(JSON.stringify(params));
                 if (mockRequest.status === 200) {
                     return JSON.parse(mockRequest.responseText);
+                }
+                else {
+                    if (Date.now() - connectStartTime < 500) {
+                        setTimeout(function () {
+                            _this.connect();
+                        }, 2000);
+                    }
                 }
             }
             else {
