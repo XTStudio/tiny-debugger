@@ -50,6 +50,9 @@ var $__Connector = /** @class */ (function () {
             if (typeof window === "object") {
                 return window.location.hostname + ":8091";
             }
+            else if (typeof $__ConnectorHostname === "string") {
+                return $__ConnectorHostname + ":8091";
+            }
             return "127.0.0.1:8091";
         })();
         this.state = 0;

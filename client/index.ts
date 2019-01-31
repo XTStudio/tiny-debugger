@@ -1,5 +1,6 @@
 declare var XTSHttpRequest: any
 declare var UIDevice: any
+declare var $__ConnectorHostname: any
 
 class $__Connector {
 
@@ -18,6 +19,9 @@ class $__Connector {
     serverAddress = (() => {
         if (typeof window === "object") {
             return window.location.hostname + ":8091"
+        }
+        else if (typeof $__ConnectorHostname === "string") {
+            return $__ConnectorHostname + ":8091"
         }
         return "127.0.0.1:8091"
     })()
