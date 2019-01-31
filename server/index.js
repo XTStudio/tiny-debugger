@@ -163,7 +163,7 @@ var TinyDebugger = /** @class */ (function (_super) {
             _this.breakpoints.push(it);
         });
         this.clients.forEach(function (it) {
-            it.emitToClient("updateBreakpoints");
+            it.emitToClient("setBreakpoints", { bps: bps });
         });
     };
     TinyDebugger.prototype.setBreakpoint = function (uri) {

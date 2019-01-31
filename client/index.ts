@@ -191,8 +191,10 @@ class $__Debugger {
     }
 
     handleEvent(name: string, params: any) {
-        if (name === "updateBreakpoints") {
-            this.updateBreakpoints()
+        if (name === "setBreakpoints") {
+            params.bps.forEach((it: string) => {
+                this.setBreakpoint(it)
+            })
         }
         else if (name === "setBreakpoint") {
             this.setBreakpoint(params.uri)

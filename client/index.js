@@ -231,8 +231,11 @@ var $__Debugger = /** @class */ (function () {
         }
     };
     $__Debugger.prototype.handleEvent = function (name, params) {
-        if (name === "updateBreakpoints") {
-            this.updateBreakpoints();
+        var _this = this;
+        if (name === "setBreakpoints") {
+            params.bps.forEach(function (it) {
+                _this.setBreakpoint(it);
+            });
         }
         else if (name === "setBreakpoint") {
             this.setBreakpoint(params.uri);

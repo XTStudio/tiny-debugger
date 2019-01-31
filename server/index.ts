@@ -72,7 +72,7 @@ export class TinyDebugger extends EventEmitter {
             this.breakpoints.push(it)
         })
         this.clients.forEach(it => {
-            it.emitToClient("updateBreakpoints")
+            it.emitToClient("setBreakpoints", { bps })
         })
     }
 
